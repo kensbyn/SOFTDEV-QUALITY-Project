@@ -23,9 +23,28 @@ AppAsset::register($this);
 <body>
     <?php $this->beginBody() ?>
     <div class="wrap">
+<?php foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
+<?php
+echo \kartik\widgets\Growl::widget([
+    'type' => ($message['type']) ? $message['type'] : 'danger',
+    'title' => ($message['title']) ? $message['title'] : 'Title Not Set!',
+    'icon' => ($message['icon']) ? $message['icon'] : 'fa fa-info',
+    'body' => ($message['message']) ? $message['message'] : 'Message Not Set!',
+    'showSeparator' => true,
+    'delay' => 1,//This delay is how long before the message shows
+    'pluginOptions' => [
+        'delay' => ($message['duration']) ? $message['duration'] : 3000,//This delay is how long the message shows for
+        'placement' => [
+            'from' => ($message['positonY']) ? $message['positonY'] : 'top',
+            'align' => ($message['positonX']) ? $message['positonX'] : 'center',
+        ]
+    ]
+]);
+?>
+<?php endforeach; ?>
         <?php
             NavBar::begin([
-                'brandLabel' => 'CPO Management',
+                'brandLabel' => 'APC CPO Management',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
@@ -37,14 +56,20 @@ AppAsset::register($this);
             if (Yii::$app->user->isGuest) {
                 $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
             } else {
-                $menuItems[] = ['label' => 'Partners', 'url' => ['/industrypartners/partners']];
-                $menuItems[] = ['label' => 'Site Users', 'url' => ['/siteusers/usermanagement']];
-				$menuItems[] = ['label' => 'Internship',
+                $menuItems[] = ['label' => 'Industry Partners',
+                                'items'=> [
+                                    ['label' => 'Companies', 'url' => ['/industrypartners/partners']],
+                                    ['label' => 'Contacts', 'url' => ['/industrypartners/hr']]
+                                ]
+                                ];
+				$menuItems[] = ['label' => 'Internship Program',
 								'items' => [
-									['label' => 'Students', 'url' => ['/internship/student']],
-									['label' => 'Industry Professors', 'url' => ['/internship/industryprofessors']]
+                                    ['label' => 'Internships', 'url' => ['/internship/internship']],
+									['label' => 'Student List', 'url' => ['/internship/student']],
+									['label' => 'IP List', 'url' => ['/internship/industryprofessors']]
 								]
 								];
+                $menuItems[] = ['label' => 'Site Users', 'url' => ['/siteusers/usermanagement']];
                 $menuItems[] = [
                     'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
                     'url' => ['/site/logout'],
@@ -68,7 +93,7 @@ AppAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; APC CPO Communication Site <?= date('Y') ?></p>
         <p class="pull-right"><?= Yii::powered() ?></p>
         </div>
     </footer>

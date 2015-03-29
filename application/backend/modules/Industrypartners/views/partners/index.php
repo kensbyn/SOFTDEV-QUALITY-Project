@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Industry Partners', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create new entry', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -25,11 +25,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            //'id',
             'company_name',
             'company_address',
-            'company_contactnum',
-            'company_description:ntext',
+            ['label' => 'Primary Contact Number', 'value' => 'company_contactnum'],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

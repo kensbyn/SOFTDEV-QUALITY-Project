@@ -8,6 +8,7 @@ use frontend\models\StudentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -27,21 +28,6 @@ class StudentController extends Controller
     }
 
     /**
-     * Lists all Student models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $searchModel = new StudentSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
      * Displays a single Student model.
      * @param integer $id
      * @return mixed
@@ -51,24 +37,6 @@ class StudentController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
-    }
-
-    /**
-     * Creates a new Student model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Student();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
     }
 
     /**
@@ -82,25 +50,21 @@ class StudentController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $imageName = $model->username;
+            $model->image = UploadedFile::getInstance($model,'image');
+            if($model->image != null){
+                $model->image->saveAs('images/profile_images/'. $imageName .'.'.$model->image->extension);
+                $model->student_pic = 'images/profile_images/'. $imageName .'.'.$model->image->extension;
+            }
+            $model->save();
+ 
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
             ]);
         }
-    }
-
-    /**
-     * Deletes an existing Student model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     /**

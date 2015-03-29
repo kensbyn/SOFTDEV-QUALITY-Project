@@ -18,8 +18,8 @@ class IndustryprofessorsSearch extends Industryprofessors
     public function rules()
     {
         return [
-            [['id', 'company_id', 'user_id'], 'integer'],
-            [['username', 'firstname', 'lastname', 'email', 'contact_num'], 'safe'],
+            [['id', 'user_id'], 'integer'],
+            [['username', 'firstname', 'lastname', 'company_id', 'email', 'contact_num'], 'safe'],
         ];
     }
 
@@ -46,7 +46,7 @@ class IndustryprofessorsSearch extends Industryprofessors
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+		
         $this->load($params);
 
         if (!$this->validate()) {
@@ -54,10 +54,11 @@ class IndustryprofessorsSearch extends Industryprofessors
             // $query->where('0=1');
             return $dataProvider;
         }
-
+		
+		$query->joinWith('company');
+		
         $query->andFilterWhere([
             'id' => $this->id,
-            'company_id' => $this->company_id,
             'user_id' => $this->user_id,
         ]);
 
@@ -65,7 +66,8 @@ class IndustryprofessorsSearch extends Industryprofessors
             ->andFilterWhere(['like', 'firstname', $this->firstname])
             ->andFilterWhere(['like', 'lastname', $this->lastname])
             ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'contact_num', $this->contact_num]);
+            ->andFilterWhere(['like', 'contact_num', $this->contact_num])
+            ->andFilterWhere(['like', 'industry_partners.company_name', $this->company_id]);			
 
         return $dataProvider;
     }

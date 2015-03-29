@@ -22,12 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             //'id',
-            //['label' => 'User Name', 'value' => $model->username],
+            ['label' => 'User Name', 'value' => $model->username],
             ['label' => 'First Name', 'value' => $model->firstname],
             ['label' => 'Last Name', 'value' => $model->lastname],
             'email:email',
             ['label' => 'Contact No.', 'value' => $model->contact_num],
-            'company_id',
+            ['label' => 'Company', 'value' => $model->company->company_name],
             //'user_id',
         ],
     ]) ?>

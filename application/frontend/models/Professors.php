@@ -65,7 +65,7 @@ class Professors extends \yii\db\ActiveRecord
      */
     public function getCompany()
     {
-        return $this->hasOne(IndustryPartners::className(), ['id' => 'company_id']);
+        return $this->hasOne(Partners::className(), ['id' => 'company_id']);
     }
 
     /**

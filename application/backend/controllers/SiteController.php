@@ -6,6 +6,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use common\models\LoginForm;
 use yii\filters\VerbFilter;
+use common\models\User;
 
 /**
  * Site controller
@@ -18,27 +19,36 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
+       'access' => [
+           'class' => AccessControl::className(),
+           'only' => ['logout', 'signup', 'partners'],
+           'rules' => [
+               [
+                   'actions' => ['signup'],
+                   'allow' => false,
+                   'roles' => ['?'],
+               ],
+               [
+                   'actions' => ['logout'],
+                   'allow' => true,
+                   'roles' => ['@'],
+               ]
+/*               [
+ *                  'actions' => ['partners'],
+*                 'allow' => true,
+*                  'roles' => ['@'],
+ *                  'matchCallback' => function ($rule, $action) {
+  *                     return User::isUserAdmin(Yii::$app->user->identity->username);
+   *                }
+    */           ],
+           ],
+          'verbs' => [
+           'class' => VerbFilter::className(),
+           'actions' => [
+               'logout' => ['post'],
+           ],
+       ],
+   ];
     }
 
     /**
@@ -60,23 +70,41 @@ class SiteController extends Controller
 
     public function actionLogin()
     {
-        if (!\Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            return $this->render('login', [
-                'model' => $model,
+	   if (!\Yii::$app->user->isGuest) {
+		  return $this->goHome();
+	   }
+	 
+	   $model = new LoginForm();
+	   if ($model->load(Yii::$app->request->post()) && $model->loginAdmin()) {
+            Yii::$app->getSession()->setFlash('success', [
+                            'type' => 'growl',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'Welcome ' . Yii::$app->user->identity->username . '!',
+                            'title' => 'APC Career Placement Office',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
             ]);
-        }
-    }
+		  return $this->goBack();
+	   } else {
+		   return $this->render('login', [
+			  'model' => $model,
+		   ]);
+	   }
+	}
 
     public function actionLogout()
     {
         Yii::$app->user->logout();
+            Yii::$app->getSession()->setFlash('warning', [
+                            'type' => 'growl',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You have been logged out. Thank you!',
+                            'title' => 'Logout',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);        
 
         return $this->goHome();
     }
