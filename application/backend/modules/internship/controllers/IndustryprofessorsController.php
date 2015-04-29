@@ -8,6 +8,7 @@ use backend\modules\internship\models\IndustryprofessorsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 
 /**
  * IndustryprofessorsController implements the CRUD actions for Industryprofessors model.
@@ -32,13 +33,39 @@ class IndustryprofessorsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new IndustryprofessorsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+if(Yii::$app->user->isGuest==false){
+            if(Yii::$app->user->identity->roles == 20){
+			$searchModel = new IndustryprofessorsSearch();
+			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+			return $this->render('index', [
+				'searchModel' => $searchModel,
+				'dataProvider' => $dataProvider,
+			]);
+} else{
+                Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;
+            }   
+        }else{
+                            Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            throw new ForbiddenHttpException;
+        }
     }
 
     /**
@@ -48,9 +75,35 @@ class IndustryprofessorsController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+       if(Yii::$app->user->isGuest==false){
+            if(Yii::$app->user->identity->roles == 20){
+             return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+        } else{
+                Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;
+            }   
+        }else{
+                            Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            throw new ForbiddenHttpException;
+        }
     }
 
     /**
@@ -61,13 +114,39 @@ class IndustryprofessorsController extends Controller
     public function actionCreate()
     {
         $model = new Industryprofessors();
-
+if(Yii::$app->user->isGuest==false){
+            if(Yii::$app->user->identity->roles == 20){
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
             ]);
+        }
+
+        } else{
+                Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;
+            }   
+        }else{
+                            Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            throw new ForbiddenHttpException;
         }
     }
 
@@ -80,6 +159,8 @@ class IndustryprofessorsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+if(Yii::$app->user->isGuest==false){
+            if(Yii::$app->user->identity->roles == 20){
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -87,6 +168,31 @@ class IndustryprofessorsController extends Controller
             return $this->render('update', [
                 'model' => $model,
             ]);
+        }
+
+        } else{
+                Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;
+            }   
+        }else{
+                            Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            throw new ForbiddenHttpException;
         }
     }
 
@@ -98,9 +204,36 @@ class IndustryprofessorsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+   if(Yii::$app->user->isGuest==false){
+            if(Yii::$app->user->identity->roles == 20){
+                 $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+
+        } else{
+                Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;
+            }   
+        }else{
+                            Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            throw new ForbiddenHttpException;
+        }
     }
 
     /**
@@ -118,4 +251,6 @@ class IndustryprofessorsController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+
 }

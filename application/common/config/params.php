@@ -1,7 +1,7 @@
 <?php
 return [
-    'adminEmail' => 'cpo@it112apc09.ml',
-    'supportEmail' => 'kensbyn@gmail.com',
+    'adminEmail' => 'cpo@outlook.ph',
+    'supportEmail' => 'kensbyn@outlook.ph',
     'user.passwordResetTokenExpire' => 3600,
-    'icon-framework' => 'fa',  // Font Awesome Icon framework
+//    'icon-framework' => 'fa',  // Font Awesome Icon framework
 ];

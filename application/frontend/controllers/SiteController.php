@@ -82,22 +82,30 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-                Yii::$app->mailer->compose()
-                    ->setFrom('cpo@it112apc09.ml')
-                    ->setTo('kensbyn@outlook.ph')
-                    ->setSubject('Test Mail')
-                    ->setTextBody('This is the mail')
-                    ->send();
-
+            $sel = Student::find()
+                        ->where(['username' => Yii::$app->user->identity->username])
+                        ->one();
+            if(Yii::$app->user->identity->roles == 10){
             Yii::$app->getSession()->setFlash('success', [
                             'type' => 'growl',
                             'duration' => 3000,
-                            'icon' => 'fa fa-users',
-                            'message' => 'Welcome ' . Yii::$app->user->identity->username . '!',
+                            'icon' => Yii::$app->homeUrl.$sel->student_pic,
+                            'message' => '<img src=\''.Yii::$app->homeUrl.$sel->student_pic . '\' width=\'35px\' height=\'35px\' draggable="false" border="0" alt="Null"> Welcome ' . Yii::$app->user->identity->username . '!',
                             'title' => 'APC Career Placement Office',
                             'positonY' => 'top',
                             'positonX' => 'center'
             ]);
+            }else{
+                            Yii::$app->getSession()->setFlash('success', [
+                            'type' => 'growl',
+                            'duration' => 3000,
+                            'icon' => Yii::$app->homeUrl.'images/student_images.png',
+                            'message' => '<img src=\''.Yii::$app->homeUrl .'images/profile_images/student_image.png\'width=\'35px\' height=\'35px\' draggable="false" border="0" alt="Null"> Welcome ' . Yii::$app->user->identity->username . '!',
+                            'title' => 'APC Career Placement Office',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            }
             return $this->goBack();
         } else {
             return $this->render('login', [
@@ -130,7 +138,7 @@ class SiteController extends Controller
                             'type' => 'growl',
                             'duration' => 3000,
                             'icon' => 'fa fa-users',
-                            'message' => 'Thank you for contacting us. We will respond to you as soon as possible.',
+                            'message' => 'An email has been sent to '. Yii::$app->params['adminEmail'] . '. Thank you for contacting us. We will respond to you as soon as possible.',
                             'title' => 'APC Career Placement Office',
                             'positonY' => 'top',
                             'positonX' => 'center'
@@ -159,6 +167,11 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionDevs()
+    {
+        return $this->render('devs');
     }
 
     public function actionSignup()
@@ -224,11 +237,28 @@ class SiteController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->getSession()->setFlash('success', 'Check your email for further instructions.');
+                                       Yii::$app->getSession()->setFlash('success', [
+                            'type' => 'growl',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'An email has been sent with the link on how to reset your password.',
+                            'title' => 'APC Career Placement Office',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
 
                 return $this->goHome();
             } else {
-                Yii::$app->getSession()->setFlash('error', 'Sorry, we are unable to reset password for email provided.');
+                                        Yii::$app->getSession()->setFlash('success', [
+                            'type' => 'growl',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'Sorry, we are unable to reset password for email provided.',
+                            'title' => 'APC Career Placement Office',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+
             }
         }
 
@@ -246,8 +276,6 @@ class SiteController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->getSession()->setFlash('success', 'New password was saved.');
-
             return $this->goHome();
         }
 

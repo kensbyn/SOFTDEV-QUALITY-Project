@@ -9,6 +9,9 @@ use frontend\models\Student;
 use frontend\models\Professors;
 use frontend\models\Partnerhr;
 use common\models\User;
+use kartik\icons\Icon;
+
+Icon::map($this);  
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -25,7 +28,7 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body>
+<?= '<body style="background-image:url('.Yii::$app->homeUrl.'frontend/web/images/bg.jpg);background-repeat: no-repeat;background-attachment:fixed;background-position: center center;background-size:cover;">' ?>
     <?php $this->beginBody() ?>
     <div class="wrap">
     <?php foreach (Yii::$app->session->getAllFlashes() as $message):; ?>
@@ -71,55 +74,56 @@ echo \kartik\widgets\Growl::widget([
 
 						
             NavBar::begin([
-                'brandLabel' => 'APC Career Placement Office',
+                'brandLabel' => Yii::$app->name,
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
                 ],
             ]);
             $menuItems = [
-                ['label' => 'Home', 'url' => ['/site/index']],
-                ['label' => 'Partners', 'url' => ['/partners/index']],
-                ['label' => 'Contact Us', 'url' => ['/site/contact']],
-                ['label' => 'About', 'url' => ['/site/about']],
+                ['label' => Icon::show('home') . 'Home', 'url' => [Yii::$app->homeUrl.'..']],
+                ['label' => Icon::show('bookmark') . 'Posts', 'url' => ['/posts/index']],
+                ['label' => Icon::show('institution') . 'Partners', 'url' => ['/partners/index']],
+                ['label' => Icon::show('envelope') . 'Contact Us', 'url' => ['/site/contact']],
+                ['label' => Icon::show('users') . 'About', 'url' => ['/site/about']],
             ];
             if (Yii::$app->user->isGuest) {
                 $menuItems[] = ['label' => '',
 								'items' => [
-									['label' => 'Signup', 'url' => ['/site/signup']],
-									['label' => 'Login', 'url' => ['/site/login']]
+									['label' => Icon::show('user-plus') . 'Signup', 'url' => ['/site/signup']],
+									['label' => Icon::show('sign-in') . 'Login', 'url' => ['/site/login']]
 								]
 								];
             } else {
 				if($siteusr->roles == 20){
-					$menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl .'/images/profile_images/student_image.png\'width=\'25px\' height=\'25px\' border="0" alt="Null">',
+					$menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl .'images/profile_images/student_image.png\'width=\'25px\' height=\'25px\' draggable="false" border="0" alt="Null">&nbsp'. Yii::$app->user->identity->firstname,
 						'items' => [
-							['label' => 'Manage website', 'url' => ['../../backend/web']],
-							['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
+							['label' => Icon::show('bars'). 'Manage website', 'url' => [Yii::$app->homeUrl.'../backend']],
+							['label' => Icon::show('sign-out') . 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
 						]
 					];
 
 				}else if($siteusr->roles == 10){
 
-					$menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl . $sel->student_pic .'\' width=\'25px\' height=\'25px\' border="0" alt="Null">',
+					$menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl . $sel->student_pic .'\' width=\'25px\' height=\'25px\' border="0" alt="Null">&nbsp'. Yii::$app->user->identity->firstname,
 						'items' => [
-							['label' => 'My account', 'url' => [$strings]],
-							['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
+							['label' => Icon::show('user').'My account', 'url' => [$strings]],
+							['label' => Icon::show('sign-out') . 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
 						]
 					];
 				}else if($siteusr->roles == 15){
-                    $menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl . '/images/profile_images/student_image.png\' width=\'25px\' height=\'25px\' border="0" alt="Null">',
+                    $menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl . 'images/profile_images/student_image.png\' width=\'25px\' height=\'25px\' border="0" alt="Null">&nbsp'. Yii::$app->user->identity->firstname,
                         'items' => [
-                            ['label' => 'Manage website', 'url' => ['../../backend/web']],
-                            ['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
+                            ['label' => Icon::show('user') . 'My account', 'url' => [$strings]],
+                            ['label' => Icon::show('sign-out') . 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
                         ]
                     ];
 
                 }else if($siteusr->roles == 25){
-                    $menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl . 'images/profile_images/student_image.png\' width=\'25px\' height=\'25px\' border="0" alt="Null">',
+                    $menuItems[] = ['label' => '<img src=\''. Yii::$app->homeUrl . 'images/profile_images/student_image.png\' width=\'25px\' height=\'25px\' border="0" alt="Null">&nbsp'. Yii::$app->user->identity->firstname,
                         'items' => [
-                            ['label' => 'Manage website', 'url' => [Yii::$app->homeUrl . '/../backend/web']],
-                            ['label' => 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
+                            ['label' => Icon::show('user') . 'My account', 'url' => [$strings]],
+                            ['label' => Icon::show('sign-out') . 'Logout (' . Yii::$app->user->identity->username . ')', 'url' => ['/site/logout'],'linkOptions' => ['data-method' => 'post']]
                         ]
                     ];
 
@@ -142,8 +146,9 @@ echo \kartik\widgets\Growl::widget([
 
     <footer class="footer">
         <div class="container">
-        <p class="pull-left">&copy; APC Career Placement Office <?= date('Y') ?></p>
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-left">&copy; <a href="http://www.apc.edu.ph/">Asia Pacific College </a>Career Placement Office <?= date('Y') ?></p>
+        <p class="pull-right"> <?= Yii::powered() ?></p>
+    
         </div>
     </footer>
 

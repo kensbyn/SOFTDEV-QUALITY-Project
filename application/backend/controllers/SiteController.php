@@ -7,6 +7,9 @@ use yii\web\Controller;
 use common\models\LoginForm;
 use yii\filters\VerbFilter;
 use common\models\User;
+use yii\web\ForbiddenHttpException;
+use backend\modules\posts\models\Posts;
+use backend\modules\posts\models\PostsSearch;
 
 /**
  * Site controller
@@ -65,7 +68,39 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+       if(Yii::$app->user->isGuest==false){
+            if(Yii::$app->user->identity->roles == 20){
+     $searchModel = new PostsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+} else{
+                Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;
+            }   
+        }else{
+                            Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed here.',
+                            'title' => 'Administration',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            throw new ForbiddenHttpException;
+        }
     }
 
     public function actionLogin()
@@ -106,6 +141,6 @@ class SiteController extends Controller
                             'positonX' => 'center'
             ]);        
 
-        return $this->goHome();
+        return $this->redirect(Yii::$app->homeUrl.'../',302);
     }
 }

@@ -21,14 +21,24 @@ class ContactForm extends Model
      */
     public function rules()
     {
-        return [
+        if(Yii::$app->user->isGuest)
+        {
+                    return [
             // name, email, subject and body are required
             [['name', 'email', 'subject', 'body'], 'required'],
             // email has to be a valid email address
             ['email', 'email'],
             // verifyCode needs to be entered correctly
-            ['verifyCode', 'captcha'],
+                ['verifyCode', 'captcha'],
         ];
+        }else{
+                    return [
+            // name, email, subject and body are required
+            [['name', 'email', 'subject', 'body'], 'required'],
+            // email has to be a valid email address
+            ['email', 'email'],
+        ];
+        }
     }
 
     /**
@@ -50,10 +60,10 @@ class ContactForm extends Model
     public function sendEmail($email)
     {
         return Yii::$app->mailer->compose()
-            ->setTo($email)
             ->setFrom([$this->email => $this->name])
-            ->setSubject($this->subject)
+            ->setTo($email)
+            ->setSubject('[CPO Website Inquiry] ' . $this->subject)
             ->setTextBody($this->body)
             ->send();
-    }
+   }
 }

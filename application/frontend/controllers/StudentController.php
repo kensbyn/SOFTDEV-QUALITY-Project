@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use yii\web\ForbiddenHttpException;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -34,9 +35,20 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $sel = Student::find()
+                        ->where(['id' => $id])
+                        ->one();
+        if (Yii::$app->user->isGuest==false) {
+            if (Yii::$app->user->identity->id == $sel->user_id) {
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            }else {
+                throw new ForbiddenHttpException;
+            }
+        }else{
+            throw new ForbiddenHttpException;
+        }
     }
 
     /**
@@ -47,8 +59,10 @@ class StudentController extends Controller
      */
     public function actionUpdate($id)
     {
+        if(Yii::$app->user->isGuest==false){
+            if(Yii::$app->user->identity->roles == 25){
         $model = $this->findModel($id);
-
+        if($model->user_id == Yii::$app->user->identity->id){
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $imageName = $model->username;
             $model->image = UploadedFile::getInstance($model,'image');
@@ -64,6 +78,43 @@ class StudentController extends Controller
             return $this->render('update', [
                 'model' => $model,
             ]);
+        }
+
+        }else{
+                            Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed to update this user',
+                            'title' => 'Update Account',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;            
+        }
+                    } else{
+                                        Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed to update this user',
+                            'title' => 'Update Account',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+                throw new ForbiddenHttpException;
+            }   
+        }else{
+                                        Yii::$app->getSession()->setFlash('error', [
+                            'type' => 'danger',
+                            'duration' => 3000,
+                            'icon' => 'fa fa-users',
+                            'message' => 'You are not allowed to update this user',
+                            'title' => 'Update Account',
+                            'positonY' => 'top',
+                            'positonX' => 'center'
+            ]);
+            throw new ForbiddenHttpException;
         }
     }
 
